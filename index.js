@@ -9,8 +9,6 @@
 const server = require('./lib/server.js');
 const workers = require('./lib/worker.js');
 
-
-
 //app object - module scaffolding
 const app = {};
 

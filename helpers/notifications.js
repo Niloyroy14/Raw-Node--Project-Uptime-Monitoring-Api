@@ -8,8 +8,8 @@
 //depencies
 
 const https = require('https');
-const {twilio} = require('./environments.js')
-
+const {twilioCredential} = require('./environments.js')
+const twilio = require('twilio'); // by library
 
 //module scaffolding
 const notifications = {};
@@ -23,46 +23,61 @@ notifications.sendTwilioSms = (phone, msg, callback) => {
     const userMsg = typeof msg === 'string' && msg.trim().length > 0 && msg.trim().length <= 1600 ? msg.trim() : false;
 
     if (userPhone && userMsg) {
-        //configure the request payload
-        const payload = {
-            From: twilio.fromPhone,
-            To: `+88${userPhone}`,
-            Body: userMsg,
-        };
 
-        //stringyfy the payload
-        const stringyfyPayload = JSON.stringify(payload);
+        const accountSid = twilioCredential.accountSid;
+        const authToken = twilioCredential.authToken;
+        const client = new twilio(accountSid, authToken);
 
-        //configure the request details
-        const requestDetails = {
-            hostName: 'api.twilio.com',
-            method: 'POST',
-            path: `/2010-04-01/Accounts/${twilio.accountSid}/Messages.json`,
-            auth: `${twilio.accountSid}:${twilio.authToken}`,
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-        };
+        client.messages
+            .create({
+                body: userMsg,
+                from: twilioCredential.fromPhone,
+                statusCallback: 'http://postb.in/1234abcd',
+                to: `+88${userPhone}`
+            })
+            .then(message => console.log(message));
 
-        //instantiated the request object
+        // //configure the request payload
+        // const payload = {
+        //     From: twilio.fromPhone,
+        //     To: `+88${userPhone}`,
+        //     Body: userMsg,
+        // };
 
-        const req = https.request(requestDetails, (res) => {
-            //get the status of the send request
-            const status = res.statusCode;
-            //callback succesfully if the request went throw
-            if (status === 200 || status === 201) {
-                callback(false);
-            } else {
-                callback(`Status code returned was ${status}`);
-            }
-        });
+        // //stringyfy the payload
+        // const stringyfyPayload = JSON.stringify(payload);
 
-        req.on('error', (e) => {
-            callback(e);
-        });
+        // //configure the request details
+        // const requestDetails = {
+        //     hostName: 'api.twilio.com',
+        //     method: 'POST',
+        //     path: `/2010-04-01/Accounts/${twilio.accountSid}/Messages.json`,
+        //     auth: `${twilio.accountSid}:${twilio.authToken}`,
+        //     headers: {
+        //         'Content-Type': 'application/x-www-form-urlencoded',
+        //     },
+        // };
 
-        req.write(stringyfyPayload);
-        req.end();
+        // //instantiated the request object
+
+        // const req = https.request(requestDetails, (res) => {
+        //     //get the status of the send request
+        //     const status = res.statusCode;
+        //     console.log(status);
+        //     //callback succesfully if the request went throw
+        //     if (status === 200 || status === 201) {
+        //         callback(false);
+        //     } else {
+        //         callback(`Status code returned was ${status}`);
+        //     }
+        // });
+
+        // req.on('error', (e) => {
+        //     callback(e);
+        // });
+
+        // req.write(stringyfyPayload);
+        // req.end();
 
     } else {
         callback('Given parameters were missing or invalid!');

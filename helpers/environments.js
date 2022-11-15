@@ -17,7 +17,7 @@ environments.staging = {
     envName: 'staging',
     secretKey: 'hdstryffhgfmm',
     maxChecks: 5,
-    twilio: {
+    twilioCredential: {
         fromPhone: '+14243641116',
         accountSid: 'ACeed18a81af557089151ba56244762ace',
         authToken: '1e37c4b96be35b98b5155d851d837aa3'
@@ -29,7 +29,7 @@ environments.production = {
     envName: 'production',
     secretKey: 'hdhklstryffyryfnhgfmm',
     maxChecks: 5,
-    twilio: {
+    twilioCredential: {
         fromPhone: '+14243641116',
         accountSid: 'ACeed18a81af557089151ba56244762ace',
         authToken: '1e37c4b96be35b98b5155d851d837aa3'
